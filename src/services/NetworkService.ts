@@ -25,6 +25,7 @@ import { combineLatest, defer, EMPTY, from, Observable } from 'rxjs';
 import { catchError, flatMap, map, tap } from 'rxjs/operators';
 import { NetworkConfiguration, NetworkType, RepositoryFactory, RepositoryFactoryHttp } from 'symbol-sdk';
 import { OfflineRepositoryFactory } from '@/services/offline/OfflineRepositoryFactory';
+import { CommonHelpers } from '@/core/utils/CommonHelpers';
 
 /**
  * The service in charge of loading and caching anything related to Network from Rest.
@@ -167,5 +168,19 @@ export class NetworkService {
                   websocketUrl: URLHelpers.httpToWsUrl(url) + '/ws',
                   websocketInjected: WebSocket,
               });
+    }
+    /**
+     * It checks if a node has Websocket functioning properly to subscribe.
+     * @param url the url.
+     */
+    public async checkWebsocketConnection(url: string) {
+        const webSocket = new WebSocket(url);
+        let websocketConnectionStatus: boolean = false;
+        webSocket.onmessage = function (e) {
+            // @ts-ignore
+            websocketConnectionStatus = e.currentTarget.readyState == 1;
+        };
+        await CommonHelpers.sleep(2000);
+        return { status: websocketConnectionStatus, sslNode: url.indexOf(':3001') !== -1 };
     }
 }
