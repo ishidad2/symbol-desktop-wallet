@@ -311,27 +311,24 @@ export default {
                     progressTotalNumOfNodes: 1,
                 });
                 nodeNetworkModelResult = await networkService.getNetworkModel(newCandidateUrl, networkType, isOffline).toPromise();
-                let wsUrl = undefined;
-                let wsConnection = undefined;
+                let webSocketConnection = undefined;
                 if (navigator.onLine && !isOffline) {
-                    wsUrl = nodeNetworkModelResult.repositoryFactory.createListener().url;
-                    wsConnection = await networkService.checkWebsocketConnection(wsUrl);
-                    if (!wsConnection.status && wsConnection.sslNode) {
-                        nodeNetworkModelResult = await networkService
-                            .getNetworkModel(newCandidateUrl.replace('https', 'http').replace('3001', '3000'), networkType, isOffline)
-                            .toPromise();
-                        wsUrl = nodeNetworkModelResult.repositoryFactory.createListener().url;
-                        wsConnection = await networkService.checkWebsocketConnection(wsUrl);
-                    }
+                    webSocketConnection = await networkService.CheckWebSocketConnectionHttpAndHttps(
+                        nodeNetworkModelResult,
+                        newCandidateUrl,
+                        networkType,
+                        false,
+                    );
                 }
                 if (
-                    nodeNetworkModelResult &&
-                    nodeNetworkModelResult.networkModel &&
-                    nodeNetworkModelResult.networkModel.networkType === networkType &&
-                    wsConnection &&
-                    wsConnection.status
+                    webSocketConnection &&
+                    webSocketConnection.nodeNetworkModelResult &&
+                    webSocketConnection.nodeNetworkModelResult.networkModel &&
+                    webSocketConnection.nodeNetworkModelResult.networkModel.networkType === networkType &&
+                    webSocketConnection.wsConnection &&
+                    webSocketConnection.wsConnection.status
                 ) {
-                    await dispatch('CONNECT_TO_A_VALID_NODE', nodeNetworkModelResult);
+                    await dispatch('CONNECT_TO_A_VALID_NODE', webSocketConnection.nodeNetworkModelResult);
                 } else {
                     return await dispatch('notification/ADD_ERROR', NotificationType.INVALID_NODE, { root: true });
                 }
@@ -355,31 +352,24 @@ export default {
                     nodeNetworkModelResult = await networkService
                         .getNetworkModel(currentProfile.selectedNodeUrlToConnect, networkType, isOffline)
                         .toPromise();
-                    let wsUrl = undefined;
-                    let wsConnection = undefined;
+                    let webSocketConnection = undefined;
                     if (navigator.onLine && !isOffline) {
-                        wsUrl = nodeNetworkModelResult.repositoryFactory.createListener().url;
-                        wsConnection = await networkService.checkWebsocketConnection(wsUrl);
-                        if (!wsConnection.status && wsConnection.sslNode) {
-                            nodeNetworkModelResult = await networkService
-                                .getNetworkModel(
-                                    currentProfile.selectedNodeUrlToConnect.replace('https', 'http').replace('3001', '3000'),
-                                    networkType,
-                                    isOffline,
-                                )
-                                .toPromise();
-                            wsUrl = nodeNetworkModelResult.repositoryFactory.createListener().url;
-                            wsConnection = await networkService.checkWebsocketConnection(wsUrl);
-                        }
+                        webSocketConnection = await networkService.CheckWebSocketConnectionHttpAndHttps(
+                            nodeNetworkModelResult,
+                            newCandidateUrl,
+                            networkType,
+                            false,
+                        );
                     }
                     if (
-                        nodeNetworkModelResult &&
-                        nodeNetworkModelResult.repositoryFactory &&
-                        nodeNetworkModelResult.networkModel.networkType === currentProfile.networkType &&
-                        wsConnection &&
-                        wsConnection.status
+                        webSocketConnection &&
+                        webSocketConnection.nodeNetworkModelResult &&
+                        webSocketConnection.nodeNetworkModelResult.repositoryFactory &&
+                        webSocketConnection.nodeNetworkModelResult.networkModel.networkType === currentProfile.networkType &&
+                        webSocketConnection.wsConnection &&
+                        webSocketConnection.wsConnection.status
                     ) {
-                        await dispatch('CONNECT_TO_A_VALID_NODE', nodeNetworkModelResult);
+                        await dispatch('CONNECT_TO_A_VALID_NODE', webSocketConnection.nodeNetworkModelResult);
                         nodeFound = true;
                     } else {
                         // selectedNodeUrlToConnect didn't work, let's remove it from the nodeList
