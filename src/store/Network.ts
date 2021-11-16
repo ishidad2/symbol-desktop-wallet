@@ -312,7 +312,7 @@ export default {
                 });
                 nodeNetworkModelResult = await networkService.getNetworkModel(newCandidateUrl, networkType, isOffline).toPromise();
                 let webSocketConnection = undefined;
-                if (navigator.onLine && !isOffline) {
+                if (navigator.onLine && !isOffline && nodeNetworkModelResult) {
                     webSocketConnection = await networkService.CheckWebSocketConnectionHttpAndHttps(
                         nodeNetworkModelResult,
                         newCandidateUrl,
@@ -353,10 +353,10 @@ export default {
                         .getNetworkModel(currentProfile.selectedNodeUrlToConnect, networkType, isOffline)
                         .toPromise();
                     let webSocketConnection = undefined;
-                    if (navigator.onLine && !isOffline) {
+                    if (navigator.onLine && !isOffline && nodeNetworkModelResult) {
                         webSocketConnection = await networkService.CheckWebSocketConnectionHttpAndHttps(
                             nodeNetworkModelResult,
-                            newCandidateUrl,
+                            currentProfile.selectedNodeUrlToConnect,
                             networkType,
                             false,
                         );
