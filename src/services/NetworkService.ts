@@ -195,7 +195,7 @@ export class NetworkService {
      * @param networkType
      * @param isOffline whether user is in offline mode
      */
-    public async CheckWebSocketConnectionHttpAndHttps(
+    public async checkWebSocketConnectionHttpAndHttps(
         nodeNetworkModelResult: any,
         url: string,
         networkType: NetworkType,
