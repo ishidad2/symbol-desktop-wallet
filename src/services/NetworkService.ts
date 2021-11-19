@@ -178,7 +178,7 @@ export class NetworkService {
         return isOffline
             ? new OfflineRepositoryFactory(networkType)
             : new RepositoryFactoryHttp(url, {
-                  websocketUrl: URLHelpers.httpToWsUrl(url) + '/ws',
+                  websocketUrl: url.indexOf('http:') !== -1 ? URLHelpers.httpToWsUrl(url) + '/ws' : URLHelpers.httpsToWsUrl(url) + '/wss',
                   websocketInjected: WebSocket,
               });
     }

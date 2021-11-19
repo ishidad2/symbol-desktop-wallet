@@ -31,6 +31,11 @@ export class URLHelpers {
             return url.replace('http', 'ws');
         }
     };
+    public static httpsToWsUrl = (url: string) => {
+        if (UrlValidator.validate(url)) {
+            return url.replace('https', 'wss');
+        }
+    };
 
     /**
      * Get full node url and add missing pieces
