@@ -311,14 +311,20 @@ export default {
                     progressTotalNumOfNodes: 1,
                 });
                 nodeNetworkModelResult = await networkService.getNetworkModel(newCandidateUrl, networkType, isOffline).toPromise();
+                let websocketConnectionStatus = false;
+                if (navigator.onLine && !isOffline) {
+                    websocketConnectionStatus = await networkService.checkWebsocketConnection(
+                        nodeNetworkModelResult.repositoryFactory.websocketUrl,
+                        2000,
+                    );
+                }
                 if (
-                    navigator.onLine &&
-                    !isOffline &&
                     nodeNetworkModelResult &&
                     nodeNetworkModelResult.repositoryFactory &&
                     nodeNetworkModelResult.repositoryFactory.websocketUrl &&
                     nodeNetworkModelResult.networkModel &&
-                    nodeNetworkModelResult.networkModel.networkType === networkType
+                    nodeNetworkModelResult.networkModel.networkType === networkType &&
+                    websocketConnectionStatus
                 ) {
                     await dispatch('CONNECT_TO_A_VALID_NODE', nodeNetworkModelResult);
                 } else {
@@ -341,17 +347,23 @@ export default {
                         progressCurrentNodeIndex: ++progressCurrentNodeInx,
                         progressTotalNumOfNodes: numOfNodes,
                     });
+                    let websocketConnectionStatus = false;
                     nodeNetworkModelResult = await networkService
                         .getNetworkModel(currentProfile.selectedNodeUrlToConnect, networkType, isOffline)
                         .toPromise();
+                    if (navigator.onLine && !isOffline) {
+                        websocketConnectionStatus = await networkService.checkWebsocketConnection(
+                            nodeNetworkModelResult.repositoryFactory.websocketUrl,
+                            2000,
+                        );
+                    }
                     if (
-                        navigator.onLine &&
-                        !isOffline &&
                         nodeNetworkModelResult &&
                         nodeNetworkModelResult.repositoryFactory &&
                         nodeNetworkModelResult.repositoryFactory.websocketUrl &&
                         nodeNetworkModelResult.networkModel &&
-                        nodeNetworkModelResult.networkModel.networkType === networkType
+                        nodeNetworkModelResult.networkModel.networkType === networkType &&
+                        websocketConnectionStatus
                     ) {
                         await dispatch('CONNECT_TO_A_VALID_NODE', nodeNetworkModelResult);
                         nodeFound = true;

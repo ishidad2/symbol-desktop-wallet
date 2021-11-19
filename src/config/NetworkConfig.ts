@@ -53,7 +53,7 @@ export interface NetworkConfig {
 export const defaultTestnetNetworkConfig: NetworkConfig = {
     explorerUrl: 'https://testnet.symbol.fyi/',
     faucetUrl: 'https://testnet.symbol.tools/',
-    statisticServiceUrl: 'http://testnet.symbol.services',
+    statisticServiceUrl: 'https://testnet.symbol.services',
     defaultNetworkType: 152,
     networkConfigurationDefaults: {
         maxMosaicDivisibility: 6,
