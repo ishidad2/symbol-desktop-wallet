@@ -78,7 +78,7 @@ export class NodeService {
         };
         if (!isOffline && navigator.onLine) {
             try {
-                const nodeInfos = await this.createStatisticServiceRestClient(networkConfig[networkType].statisticServiceUrl).getNodes(
+                let nodeInfos = await this.createStatisticServiceRestClient(networkConfig[networkType].statisticServiceUrl).getNodes(
                     nodeSearchCriteria.nodeFilter,
                     nodeSearchCriteria.limit,
                     nodeSearchCriteria.ssl,
@@ -86,6 +86,7 @@ export class NodeService {
                 if (!nodeInfos) {
                     return undefined;
                 }
+                nodeInfos = nodeInfos.filter((n) => n.apiStatus?.webSocket?.isAvailable);
                 return nodeInfos.map((n) =>
                     this.createNodeModel(
                         n.apiStatus?.restGatewayUrl,

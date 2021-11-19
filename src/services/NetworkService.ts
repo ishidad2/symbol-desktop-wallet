@@ -25,10 +25,6 @@ import { combineLatest, defer, EMPTY, from, Observable } from 'rxjs';
 import { catchError, flatMap, map, tap } from 'rxjs/operators';
 import { NetworkConfiguration, NetworkType, RepositoryFactory, RepositoryFactoryHttp } from 'symbol-sdk';
 import { OfflineRepositoryFactory } from '@/services/offline/OfflineRepositoryFactory';
-import { CommonHelpers } from '@/core/utils/CommonHelpers';
-// @ts-ignore
-import { MessageEvent } from 'electron/main';
-
 /**
  * The service in charge of loading and caching anything related to Network from Rest.
  * The cache is done by storing the payloads in SimpleObjectStorage.
@@ -170,52 +166,5 @@ export class NetworkService {
                   websocketUrl: URLHelpers.httpToWsUrl(url) + '/ws',
                   websocketInjected: WebSocket,
               });
-    }
-    /**
-     * It checks if a node has Websocket functioning properly to subscribe.
-     * @param url the url.
-     * @param timeout number
-     */
-    public async checkWebsocketConnection(url: string, timeout: number): Promise<{ status: boolean; sslNode: boolean }> {
-        const webSocket = new WebSocket(url);
-        const httpsPort = ':3001';
-        let websocketConnectionStatus: boolean = false;
-        webSocket.onmessage = function (e: MessageEvent) {
-            websocketConnectionStatus = e.currentTarget.readyState == 1;
-        };
-        await CommonHelpers.sleep(timeout);
-        const isSslNode: boolean = url.indexOf(httpsPort) !== -1;
-        return { status: websocketConnectionStatus, sslNode: isSslNode };
-    }
-
-    /**
-     * It checks if a node has Websocket functioning properly to subscribe.
-     * @param nodeNetworkModelResult any
-     * @param url the url.
-     * @param networkType
-     * @param isOffline whether user is in offline mode
-     */
-    public async checkWebSocketConnectionHttpAndHttps(
-        nodeNetworkModelResult: any,
-        url: string,
-        networkType: NetworkType,
-        isOffline: boolean,
-    ) {
-        let wsUrl = undefined;
-        let wsConnection = undefined;
-        const httpsPort = ':3001';
-        const httpPort = ':3000';
-        wsUrl = nodeNetworkModelResult.repositoryFactory.createListener().url;
-        wsConnection = await this.checkWebsocketConnection(wsUrl, 2000);
-        if (!wsConnection.status && wsConnection.sslNode) {
-            nodeNetworkModelResult = await this.getNetworkModel(
-                url.replace('https', 'http').replace(httpsPort, httpPort),
-                networkType,
-                isOffline,
-            ).toPromise();
-            wsUrl = nodeNetworkModelResult.repositoryFactory.createListener().url;
-            wsConnection = await this.checkWebsocketConnection(wsUrl, 2000);
-        }
-        return { wsConnection: wsConnection, nodeNetworkModelResult: nodeNetworkModelResult };
     }
 }
