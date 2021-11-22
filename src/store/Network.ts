@@ -310,7 +310,14 @@ export default {
                     progressCurrentNodeIndex: 1,
                     progressTotalNumOfNodes: 1,
                 });
-                nodeNetworkModelResult = await networkService.getNetworkModel(newCandidateUrl, networkType, isOffline).toPromise();
+                const nodeService = new NodeService();
+                const statisticsServiceNodes = !isOffline ? await nodeService.getNodesFromStatisticService(networkType) : undefined;
+                const nodesList = statisticsServiceNodes || nodeService.loadNodes(currentProfile);
+    
+                const nodeWsUrl = nodesList.find((n) => n.url === newCandidateUrl)?.wsUrl;
+                nodeNetworkModelResult = await networkService
+                    .getNetworkModel(newCandidateUrl, networkType, isOffline, nodeWsUrl)
+                    .toPromise();
                 let websocketConnectionStatus = false;
                 if (navigator.onLine && !isOffline) {
                     websocketConnectionStatus = await networkService.checkWebsocketConnection(
@@ -341,6 +348,7 @@ export default {
 
                 // trying already saved one
                 if (currentProfile && currentProfile.selectedNodeUrlToConnect) {
+                    const nodeWsUrl = nodesList.find((n) => n.url === currentProfile.selectedNodeUrlToConnect)?.wsUrl;
                     commit('connectingToNodeInfo', {
                         isTryingToConnect: true,
                         tryingToConnectNodeUrl: currentProfile.selectedNodeUrlToConnect,
@@ -349,7 +357,7 @@ export default {
                     });
                     let websocketConnectionStatus = false;
                     nodeNetworkModelResult = await networkService
-                        .getNetworkModel(currentProfile.selectedNodeUrlToConnect, networkType, isOffline)
+                        .getNetworkModel(currentProfile.selectedNodeUrlToConnect, networkType, isOffline, nodeWsUrl)
                         .toPromise();
                     if (navigator.onLine && !isOffline) {
                         websocketConnectionStatus = await networkService.checkWebsocketConnection(

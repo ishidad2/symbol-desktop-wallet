@@ -56,11 +56,12 @@ export class NetworkService {
         nodeUrl: string,
         defaultNetworkType: NetworkType = NetworkType.TEST_NET,
         isOffline = false,
+        nodeWsUrl?: string,
     ): Observable<{
         networkModel: NetworkModel;
         repositoryFactory: RepositoryFactory;
     }> {
-        return from(this.createRepositoryFactory(nodeUrl, isOffline, defaultNetworkType)).pipe(
+        return from(this.createRepositoryFactory(nodeUrl, isOffline, defaultNetworkType, nodeWsUrl)).pipe(
             flatMap(({ url, repositoryFactory }) => {
                 return repositoryFactory.getGenerationHash().pipe(
                     flatMap((generationHash) => {
@@ -110,9 +111,10 @@ export class NetworkService {
         url: string,
         isOffline = false,
         networkType = NetworkType.TEST_NET,
+        nodeWsUrl?: string,
     ): Observable<{ url: string; repositoryFactory: RepositoryFactory }> {
         // console.log(`Testing ${url}`);
-        const repositoryFactory = NetworkService.createRepositoryFactory(url, isOffline, networkType);
+        const repositoryFactory = NetworkService.createRepositoryFactory(url, isOffline, networkType, nodeWsUrl);
         return defer(() => {
             return repositoryFactory.getGenerationHash();
         }).pipe(
@@ -174,11 +176,16 @@ export class NetworkService {
      * It creates the RepositoryFactory used to build the http repository/clients and listeners.
      * @param url the url.
      */
-    public static createRepositoryFactory(url: string, isOffline: boolean = false, networkType = NetworkType.TEST_NET): RepositoryFactory {
+    public static createRepositoryFactory(
+        url: string,
+        isOffline: boolean = false,
+        networkType = NetworkType.TEST_NET,
+        nodeWsUrl?: string,
+    ): RepositoryFactory {
         return isOffline
             ? new OfflineRepositoryFactory(networkType)
             : new RepositoryFactoryHttp(url, {
-                  websocketUrl: url.indexOf('http:') !== -1 ? URLHelpers.httpToWsUrl(url) + '/ws' : URLHelpers.httpsToWsUrl(url) + '/wss',
+                  websocketUrl: nodeWsUrl || URLHelpers.httpToWsUrl(url) + '/ws',
                   websocketInjected: WebSocket,
               });
     }
