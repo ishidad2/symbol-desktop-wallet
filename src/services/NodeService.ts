@@ -48,6 +48,9 @@ export class NodeService {
     ): Promise<NodeModel[]> {
         const storedNodes = this.getKnownNodesOnly(profile);
         const statisticsNodes = !isOffline ? await this.getNodesFromStatisticService(profile.networkType) : [];
+        const nodeWsUrl =
+            storedNodes.find((n) => n.url === repositoryFactoryUrl)?.wsUrl ||
+            statisticsNodes.find((n) => n.url === repositoryFactoryUrl)?.wsUrl;
         const nodeRepository = repositoryFactory.createNodeRepository();
         return nodeRepository
             .getNodeInfo()
@@ -60,6 +63,7 @@ export class NodeService {
                         undefined,
                         dto.publicKey,
                         dto.nodePublicKey,
+                        nodeWsUrl,
                     ),
                 ),
                 ObservableHelpers.defaultLast(this.createNodeModel(repositoryFactoryUrl, profile.networkType)),

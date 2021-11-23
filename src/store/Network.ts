@@ -313,7 +313,7 @@ export default {
                 const nodeService = new NodeService();
                 const statisticsServiceNodes = !isOffline ? await nodeService.getNodesFromStatisticService(networkType) : undefined;
                 const nodesList = statisticsServiceNodes || nodeService.loadNodes(currentProfile);
-    
+
                 const nodeWsUrl = nodesList.find((n) => n.url === newCandidateUrl)?.wsUrl;
                 nodeNetworkModelResult = await networkService
                     .getNetworkModel(newCandidateUrl, networkType, isOffline, nodeWsUrl)
