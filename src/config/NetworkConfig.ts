@@ -51,8 +51,8 @@ export interface NetworkConfig {
 }
 
 export const defaultTestnetNetworkConfig: NetworkConfig = {
-    explorerUrl: 'https://testnet.symbol.fyi/',
-    faucetUrl: 'https://testnet.symbol.tools/',
+    explorerUrl: 'http://23.96.28.57:8080/',
+    faucetUrl: 'http://23.96.28.57:3002/',
     statisticServiceUrl: 'https://testnet.symbol.services',
     defaultNetworkType: 152,
     networkConfigurationDefaults: {
@@ -69,12 +69,12 @@ export const defaultTestnetNetworkConfig: NetworkConfig = {
         maxCosignedAccountsPerAccount: 25,
         maxMessageSize: 1024,
         maxMosaicAtomicUnits: 8999999999000000,
-        currencyMosaicId: '72C0212E67A08BCE',
-        harvestingMosaicId: '72C0212E67A08BCE',
+        currencyMosaicId: '152C174CB656773D',
+        harvestingMosaicId: '152C174CB656773D',
         defaultDynamicFeeMultiplier: 100,
         epochAdjustment: 1667250467,
         totalChainImportance: 7842928625000000,
-        generationHash: '49D6E1CE276A85B70EAFE52349AACCA389302E7A9754BCF1221E79494FC665A4',
+        generationHash: '8CB80B906770AF80B08FA3D901E97C8BF1B54CCB0F97144ADA71D03E8789ED24',
     },
 };
 

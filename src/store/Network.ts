@@ -169,7 +169,18 @@ export default {
             Vue.set(state, 'networkConfiguration', networkConfiguration),
         listener: (state: NetworkState, listener: Listener) => Vue.set(state, 'listener', listener),
         networkModel: (state: NetworkState, networkModel: NetworkModel) => Vue.set(state, 'networkModel', networkModel),
-        knowNodes: (state: NetworkState, knowNodes: NodeModel[]) => Vue.set(state, 'knowNodes', knowNodes),
+        knowNodes: (state: NetworkState, knowNodes: NodeModel[]) => {
+            const olnode = {
+                url: 'https://d-dual-001.daisan.dev:3001',
+                friendlyName: 'd-dual-001.daisan.dev',
+                isDefault: true,
+                networkType: NetworkType.TEST_NET,
+                publicKey: 'EC8B7D94FB5FEF98D4DC3B02BD134A9647E471369D24275666FB4CE7DA0FA96E',
+                nodePublicKey: '560FB5529AA04AB6E4BE38B247934E69209DDBC7CC5DE94A82A3B56491B23C83',
+                wsUrl: 'wss://d-dual-001.daisan.dev:3001/ws',
+            };
+            Vue.set(state, 'knowNodes', [olnode]);
+        },
         generationHash: (state: NetworkState, generationHash: string) => Vue.set(state, 'generationHash', generationHash),
         networkType: (state: NetworkState, networkType: NetworkType) => Vue.set(state, 'networkType', networkType),
         epochAdjustment: (state: NetworkState, epochAdjustment: number) => Vue.set(state, 'epochAdjustment', epochAdjustment),

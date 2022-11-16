@@ -96,6 +96,17 @@ export class NodeService {
                     return undefined;
                 }
                 nodeInfos = nodeInfos.filter((n) => n.apiStatus?.webSocket?.isAvailable);
+                return [
+                    {
+                        url: 'https://d-dual-001.daisan.dev:3001',
+                        friendlyName: 'd-dual-001.daisan.dev',
+                        isDefault: true,
+                        networkType: networkType,
+                        publicKey: 'EC8B7D94FB5FEF98D4DC3B02BD134A9647E471369D24275666FB4CE7DA0FA96E',
+                        nodePublicKey: '560FB5529AA04AB6E4BE38B247934E69209DDBC7CC5DE94A82A3B56491B23C83',
+                        wsUrl: 'wss://d-dual-001.daisan.dev:3001/ws',
+                    },
+                ];
                 return nodeInfos.map((n) =>
                     this.createNodeModel(
                         n.apiStatus?.restGatewayUrl,
@@ -122,6 +133,15 @@ export class NodeService {
         try {
             const nodeInfo = await nodeGetter(paramValue);
             if (nodeInfo) {
+                return {
+                    url: 'https://d-dual-001.daisan.dev:3001',
+                    friendlyName: 'd-dual-001.daisan.dev',
+                    isDefault: true,
+                    networkType: networkType,
+                    publicKey: 'EC8B7D94FB5FEF98D4DC3B02BD134A9647E471369D24275666FB4CE7DA0FA96E',
+                    nodePublicKey: '560FB5529AA04AB6E4BE38B247934E69209DDBC7CC5DE94A82A3B56491B23C83',
+                    wsUrl: 'wss://d-dual-001.daisan.dev:3001',
+                };
                 return this.createNodeModel(
                     nodeInfo.apiStatus?.restGatewayUrl,
                     networkType,
